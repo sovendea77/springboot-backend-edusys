@@ -50,9 +50,4 @@ public class Teachers implements Serializable {
     @TableField("updated_at")
     private LocalDateTime updatedAt;
 
-    @TableField("status")
-    private String status;
-
-    @TableField("subject")
-    private String subject;
 }

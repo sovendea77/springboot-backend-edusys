@@ -54,13 +54,5 @@ public class Exams implements Serializable {
     @TableField("updated_at")
     private LocalDateTime updatedAt;
 
-    @TableField("duration")
-    private Integer duration;
-
-    @TableField("exam_date")
-    private LocalDateTime examDate;
-
-    @TableField("status")
-    private String status;
 
 }
