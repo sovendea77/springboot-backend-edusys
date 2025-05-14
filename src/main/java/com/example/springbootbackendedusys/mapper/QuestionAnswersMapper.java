@@ -13,4 +13,5 @@ import com.example.springbootbackendedusys.entity.QuestionAnswers;
  */
 public interface QuestionAnswersMapper extends BaseMapper<QuestionAnswers> {
 
+
 }

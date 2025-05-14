@@ -62,4 +62,5 @@ public class Exams implements Serializable {
 
     @TableField("status")
     private String status;
+
 }

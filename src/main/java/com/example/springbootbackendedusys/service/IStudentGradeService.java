@@ -4,8 +4,6 @@ import com.example.springbootbackendedusys.entity.StudentGrade;
 import com.baomidou.mybatisplus.extension.service.IService;
 import org.springframework.stereotype.Service;
 
-import com.baomidou.mybatisplus.extension.service.IService;
-import com.example.springbootbackendedusys.entity.StudentGrade;
 
 import java.util.List;
 import java.util.Map;
@@ -21,5 +19,6 @@ import java.util.Map;
  */
 @Service
 public interface IStudentGradeService extends IService<StudentGrade> {
+  int calculateAndSaveGrades(Integer examId);
 
 }

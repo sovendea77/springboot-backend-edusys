@@ -38,42 +38,7 @@ public class StudentGradeController {
   @Autowired
   private IExamsService examsService;
 
-  @PostMapping("/wrong-answers")
-  public R saveStudentWrongAnswers(@RequestBody Map<String, Object> wrongAnswers) {
-    try {
-      return R.ok().message("错题保存成功");
-    } catch (Exception e) {
-      return R.error().message("错题保存失败");
-    }
-  }
-  @GetMapping("/wrong-answers/{examId}/{studentId}")
-  public R getStudentWrongAnswers(@PathVariable Integer examId, @PathVariable String studentId) {
-    try {
-      List<Map<String, Object>> wrongAnswers = studentWrongAnswersService.getStudentWrongAnswers(examId, studentId);
-
-      List<Map<String, Object>> formattedAnswers = wrongAnswers.stream()
-        .map(answer -> {
-          Map<String, Object> formatted = new HashMap<>();
-          formatted.put("id", answer.get("id"));
-          formatted.put("student_answer", answer.get("studentAnswer"));
-          formatted.put("question_id", answer.get("questionId"));
-          formatted.put("is_corrected", answer.get("isCorrected"));
-          formatted.put("question_number", answer.get("questionNumber"));
-          formatted.put("chinese_number", answer.get("chineseNumber"));
-          formatted.put("content", answer.get("content"));
-          formatted.put("correct_answer", answer.get("correctAnswer"));
-          formatted.put("section_type", answer.get("sectionType"));
-          formatted.put("score", answer.get("score"));
-          return formatted;
-        })
-        .collect(Collectors.toList());
-
-      return R.ok().data(formattedAnswers);
-    } catch (Exception e) {
-      return R.error().message("获取学生错题详情失败: " + e.getMessage());
-    }
-  }
-
+  // 原 router.get('/exam-statistics/:examId', studentController.getExamStatistics);
   @GetMapping("/exam-statistics/{examId}")
   public R getExamStatistics(@PathVariable Long examId) {
     try {
@@ -135,13 +100,31 @@ public class StudentGradeController {
   }
 
 
-
+  // 原 router.post('/save-grades', studentController.saveStudentGrades);
   @PostMapping("/save-grades")
-  public R saveStudentGrades(@RequestBody List<StudentGrade> grades) {
-    boolean success = studentGradeService.saveBatch(grades);
-    return success ? R.ok().message("成绩保存成功") : R.error().message("成绩保存失败");
+  public R saveStudentGrades(@RequestBody Map<String, Object> requestData) {
+    try {
+      Integer examId = Integer.valueOf(requestData.get("examId").toString());
+
+      Exams exam = examsService.getById(examId);
+      if (exam == null) {
+        return R.error().message("考试不存在");
+      }
+
+      int savedCount = studentGradeService.calculateAndSaveGrades(examId);
+
+      return R.ok()
+        .message("成功保存 " + savedCount + " 名学生的成绩")
+        .data(new HashMap<String, Object>() {{
+          put("savedCount", savedCount);
+        }});
+
+    } catch (Exception e) {
+      return R.error().message("保存学生成绩失败: " + e.getMessage());
+    }
   }
 
+  //原 router.get('/list/:examId', studentController.getStudentList);
   @GetMapping("/list/{examId}")
   public R getStudentList(@PathVariable Long examId) {
     try {
@@ -161,6 +144,41 @@ public class StudentGradeController {
       return R.ok().data(formattedGrades);
     } catch (Exception e) {
       return R.error().message("获取学生列表失败");
+    }
+  }
+
+  // 原 router.post('/save-answers-with-grades', studentController.saveStudentAnswersWithGrades);
+  @PostMapping("/save-answers-with-grades")
+  public R saveStudentAnswersWithGrades(@RequestBody Map<String, Object> requestData) {
+    try {
+      Integer examId = Integer.valueOf(requestData.get("examId").toString());
+      String studentId = requestData.get("studentId").toString();
+      String studentName = requestData.get("studentName").toString();
+      Double totalScore = Double.valueOf(requestData.get("totalScore").toString());
+      List<Map<String, Object>> answers = (List<Map<String, Object>>) requestData.get("answers");
+
+      boolean success = studentWrongAnswersService.saveStudentAnswersWithGrades(
+        examId,
+        studentName,
+        totalScore,
+        answers
+      );
+
+      if (success) {
+        return R.ok()
+          .message("学生答案和批改结果保存成功")
+          .data(new HashMap<String, Object>() {{
+            put("examId", examId);
+            put("studentId", studentId);
+            put("studentName", studentName);
+            put("totalScore", totalScore);
+            put("savedCount", answers.size());
+          }});
+      } else {
+        return R.error().message("保存失败");
+      }
+    } catch (Exception e) {
+      return R.error().message("保存学生答案和批改结果失败: " + e.getMessage());
     }
   }
 }

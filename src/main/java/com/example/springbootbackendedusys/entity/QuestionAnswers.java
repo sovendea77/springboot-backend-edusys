@@ -45,19 +45,19 @@ public class QuestionAnswers implements Serializable {
      * 题目类型：choice, fill, judgment
      */
     @TableField("section_type")
-    private String sectionType;
+    protected String sectionType;
 
     /**
      * 题目序号
      */
     @TableField("question_number")
-    private Integer questionNumber;
+    protected Integer questionNumber;
 
     /**
      * 中文题号，如：一、二、三
      */
     @TableField("chinese_number")
-    private String chineseNumber;
+    protected String chineseNumber;
 
     /**
      * 题目内容

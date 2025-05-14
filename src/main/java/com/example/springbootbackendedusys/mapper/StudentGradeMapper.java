@@ -13,4 +13,5 @@ import com.example.springbootbackendedusys.entity.StudentGrade;
  */
 public interface StudentGradeMapper extends BaseMapper<StudentGrade> {
 
+
 }

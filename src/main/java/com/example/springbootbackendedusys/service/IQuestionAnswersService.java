@@ -18,11 +18,5 @@ import java.util.List;
  */
 @Service
 public interface IQuestionAnswersService extends IService<QuestionAnswers> {
-
-  /**
-   * 根据考试ID获取所有题目答案
-   * @param examId 考试ID
-   * @return 题目答案列表
-   */
   List<QuestionAnswers> getQuestionAnswersByExamId(Integer examId);
 }

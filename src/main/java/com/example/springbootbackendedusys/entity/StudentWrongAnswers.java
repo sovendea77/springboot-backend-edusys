@@ -57,4 +57,14 @@ public class StudentWrongAnswers implements Serializable {
 
     @TableField("score")
     private Double score;
+
+    /**
+    * 关联的题目信息
+    */
+    @TableField(exist = false)
+    private QuestionAnswers questionAnswer;
+
+
+
+
 }
